@@ -9,7 +9,19 @@
    notify: restart_http
 
  - name: allow firewall
-   firewalld: port=80/tcp permanent=true state=enabled
+   firewalld: port=18080/tcp permanent=true state=enabled
 
  - name: firewalld_reload
    service: name=firewalld state=restarted
+
+ - name: install nfs utils
+   yum: name=nfs-utils state=present
+
+ - name: enable nfs service
+   shell: systemctl enable nfs-server.service
+
+ - name: start nfs service
+   shell: systemctl start nfs-server.service 
+
+ - name: mount nfs share
+   mount: name=/var/www/html/ src=www.lab.com:/var/wordpress.files fstype=nfs4 state=mounted

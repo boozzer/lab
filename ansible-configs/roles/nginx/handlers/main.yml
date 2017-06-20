@@ -1,0 +1,6 @@
+---
+ - name: restart_nginx
+   shell: service nginx restart
+
+ - name: firewalld_reload
+   service: name=firewalld state=restarted

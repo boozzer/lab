@@ -1,0 +1,7 @@
+
+    upstream backends {
+        {% for inventory_hostname in groups['backend'] %}
+        server {{hostvars[inventory_hostname].ansible_fqdn}}:18080;
+        {% endfor %}
+    }
+

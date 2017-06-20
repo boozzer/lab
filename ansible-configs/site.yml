@@ -2,5 +2,8 @@
  - hosts: all
    become: yes
    roles:
+     - { role: hardening }
      - { role: nfs, when: "inventory_hostname in groups['www']" }
-     - {role: mariadb, when: "inventory_hostname in groups['www']" }
+     - { role: nginx, when: "inventory_hostname in groups['www']" }
+     - { role: http, when: "inventory_hostname in groups['backend']" }
+     - { role: mariadb, when: "inventory_hostname in groups['www']" }

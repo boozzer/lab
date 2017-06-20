@@ -16,6 +16,10 @@
  - name: enable mariadb service
    shell: systemctl enable mariadb
 
+ - name: restrict access to backend host
+   firewalld: port=3306/tcp source={{hostvars[item].ansible_eth1.ipv4.address}}/32 permanent=true state=enabled
+   with_items: "{{ groups['backend'] }}"
+
  - name: create DB proddb
    mysql_db: name={{db_name}} state=present login_user=root login_password=""
 

@@ -4,11 +4,8 @@
    notify: firewall_enable
 
  - name: firewalld permit ssh
-   firewalld: service=ssh source={{source_network}} permanent=true state=enabled   
+   firewalld: service=ssh permanent=true state=enabled   
    notify: firewalld_reload
-
- - name: disable selinux
-   selinux: state=disabled
 
  - name: copy hosts file
    template:
@@ -19,4 +16,3 @@
    template:
      src: resolv.conf.j2
      dest: /etc/resolv.conf
-   notify: restart_network
