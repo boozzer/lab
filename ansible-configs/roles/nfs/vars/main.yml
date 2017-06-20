@@ -1,0 +1,4 @@
+---
+http_group: 'backend'
+nfs_directory: '/var/wordpress.files'
+

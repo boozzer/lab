@@ -1,0 +1,27 @@
+---
+
+ - name: installing nfs
+   yum: name=nfs-utils state=present
+
+ - name: enable nfs service
+   shell: systemctl enable nfs-server.service
+
+ - name: start nfs service
+   shell: systemctl start nfs-server.service
+
+ - name: Create mountable dir
+   file: path={{nfs_directory}} state=directory mode=777 owner=nfsnobody group=nfsnobody
+
+ - name: update the nfs config file
+   template:
+     src: exports.j2
+     dest: /etc/exports
+
+ - name: update the nfs settings
+   shell: exportfs -a
+
+ - name: firewall permit
+   shell: firewall-cmd --permanent --add-service=nfs
+
+ - name: firewall reload
+   shell: firewall-cmd --reload
