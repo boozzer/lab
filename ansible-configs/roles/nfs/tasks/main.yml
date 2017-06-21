@@ -10,7 +10,7 @@
    shell: systemctl start nfs-server.service
 
  - name: Create mountable dir
-   file: path={{nfs_directory}} state=directory mode=777 owner=nfsnobody group=nfsnobody
+   file: path={{nfs_directory}} state=directory mode=0777 owner=nfsnobody group=nfsnobody
 
  - name: update the nfs config file
    template:
@@ -25,3 +25,18 @@
 
  - name: firewall reload
    shell: firewall-cmd --reload
+
+ - name: install rsync
+   yum: name=rsync state=present
+
+ - name: wordpress download file
+   get_url: url=http://wordpress.org/latest.tar.gz dest=/var/tmp/ mode=0755
+   
+ - name: unzip the tar archive
+   shell: tar xzvf /var/tmp/latest.tar.gz
+
+ - name: copy files to nfs directory
+   shell: rsync -avP /var/tmp/wordpress/ /var/wordpress.files
+
+ - name: create uploads directory
+   file: path=/var/wordpress.files/wp-content/uploads state=directory mode=0777 owner=deployer group=deployer

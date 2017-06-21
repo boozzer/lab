@@ -2,13 +2,12 @@
  - name: install datebase
    yum: name=mariadb-server state=present
 
- - name: permit DB in firewall
-   firewalld: zone=public port=3306/tcp permanent=true state=enabled
+ - name: firewall permit
+   shell: firewall-cmd --permanent --add-service=mysql
    notify: firewalld_reload
 
  - name: installing DB modules
    yum: name=MySQL-python state=present
-   notify: database_start
 
  - name: start mariadb service
    shell: systemctl start mariadb
@@ -20,17 +19,23 @@
    firewalld: port=3306/tcp source={{hostvars[item].ansible_eth1.ipv4.address}}/32 permanent=true state=enabled
    with_items: "{{ groups['backend'] }}"
 
+ - name: set root password
+   mysql_user: name=root password='{{db_root_password}}' check_implicit_admin: true 
+
  - name: create DB proddb
-   mysql_db: name={{db_name}} state=present login_user=root login_password=""
+   mysql_db: name={{db_name}} state=present login_user=root login_password={{db_root_password}}
 
  - name: create DB user
    mysql_user: 
      login_user: root 
+     login_password: '{{db_root_password}}'
      name: '{{name_user}}'
      password: '{{password_user}}'
      priv: '*.*:ALL,GRANT'
+     host: '{{hostvars[inventory_hostname].ansible_fqdn}}'
      state: present
      check_implicit_admin: yes
+   with_items: "{{ groups['backend'] }}"
 
- - name: set root password
-   mysql_user: login_user=root check_implicit_admin=yes name=root password={{db_root_password}} state=present
+ - name: modify wordpress database access
+   template: src=wp-config.php.j2 dest=/var/wordpress.files/wp-config.php

@@ -3,6 +3,9 @@
    yum: name=firewalld state=present
    notify: firewall_enable
 
+ - name: start firewall
+   service: name=firewalld state=started
+
  - name: firewalld permit ssh
    firewalld: service=ssh permanent=true state=enabled   
    notify: firewalld_reload
