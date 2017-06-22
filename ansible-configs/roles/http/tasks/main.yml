@@ -3,10 +3,19 @@
    yum: name=httpd state=present   
 
  - name: install php
-   yum: name=php-gd state=present
+   yum: name={{item}} state=present
+   with_items:
+     - php
+     - php-gd
+     - php-mysql
  
  - name: start httpd service
    service: name=httpd state=started
+
+ - name: modify welcome page
+   template:
+     src: welcome.conf.j2
+     dest: /etc/httpd/conf.d/welcome.conf
 
  - name: modify configuration file
    template:

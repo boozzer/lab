@@ -20,7 +20,8 @@
    with_items: "{{ groups['backend'] }}"
 
  - name: set root password
-   mysql_user: name=root password='{{db_root_password}}' check_implicit_admin: true 
+   mysql_user: name=root password='{{db_root_password}}' check_implicit_admin=true 
+   ignore_errors: true
 
  - name: create DB proddb
    mysql_db: name={{db_name}} state=present login_user=root login_password={{db_root_password}}
@@ -32,10 +33,10 @@
      name: '{{name_user}}'
      password: '{{password_user}}'
      priv: '*.*:ALL,GRANT'
-     host: '{{hostvars[inventory_hostname].ansible_fqdn}}'
+     host: '{{hostvars[item].ansible_fqdn}}'
      state: present
      check_implicit_admin: yes
    with_items: "{{ groups['backend'] }}"
 
  - name: modify wordpress database access
-   template: src=wp-config.php.j2 dest=/var/wordpress.files/wp-config.php
+   template: src=wp-config.php.j2 dest=/var/wordpress.files/wp-config.php mode=0777 owner=deployer group=deployer

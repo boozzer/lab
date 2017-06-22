@@ -30,10 +30,10 @@
    yum: name=rsync state=present
 
  - name: wordpress download file
-   get_url: url=http://wordpress.org/latest.tar.gz dest=/var/tmp/ mode=0755
+   get_url: url=http://wordpress.org/latest.tar.gz dest=/var/tmp/latest.tar.gz mode=0777
    
  - name: unzip the tar archive
-   shell: tar xzvf /var/tmp/latest.tar.gz
+   unarchive: src=/var/tmp/latest.tar.gz dest=/var/tmp/ mode=0777 owner=deployer group=deployer
 
  - name: copy files to nfs directory
    shell: rsync -avP /var/tmp/wordpress/ /var/wordpress.files
