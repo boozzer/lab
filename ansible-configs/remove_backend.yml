@@ -1,0 +1,5 @@
+---
+ - hosts: all
+   become: yes
+   roles:
+     - { role: remove-backend, when: "inventory_hostname in groups['www']" }

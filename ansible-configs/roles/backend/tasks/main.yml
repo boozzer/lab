@@ -1,10 +1,9 @@
 ---
- - name: install httpd
-   yum: name=httpd state=present   
-
- - name: install php
+ - name: install httpd, php, nfs-utils
    yum: name={{item}} state=present
    with_items:
+     - nfs-utils
+     - httpd
      - php
      - php-gd
      - php-mysql
@@ -24,13 +23,7 @@
    notify: restart_http
 
  - name: allow firewall
-   firewalld: port=18080/tcp permanent=true state=enabled
-
- - name: firewalld_reload
-   service: name=firewalld state=restarted
-
- - name: install nfs utils
-   yum: name=nfs-utils state=present
+   firewalld: port=18080/tcp permanent=true state=enabled immediate=true
 
  - name: enable nfs service
    shell: systemctl enable nfs-server.service

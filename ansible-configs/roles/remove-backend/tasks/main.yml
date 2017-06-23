@@ -1,0 +1,33 @@
+---
+ - debug:
+     msg="amount of backend hosts is less than it is supposed to be"
+   when: "host_count < 1"
+
+ - name: modify configuration
+   template:
+     src: haproxy.cfg.j2
+     dest: /etc/nginx/conf.d/beckend.conf 
+   when: "host_count >= 1"
+
+ - name: modify nginx configuration file
+   template:
+     src: nginx.conf.j2
+     dest: /etc/nginx/nginx.conf
+   notify: restart_nginx
+   when: "host_count >= 1"
+
+ - name: update the nfs config file
+   template:
+     src: exports.j2
+     dest: /etc/exports
+   when: "host_count >= 1"
+
+ - name: update the nfs settings
+   shell: exportfs -a
+   when: "host_count >= 1"
+
+ - name: remove from firewall
+   firewalld: source={{hostvars[item].ansible_eth1.ipv4.address}}/32 permanent=true state=disabled immediate=true
+   with_items: "{{ groups['remove-backend']}}"
+   when: "host_count >= 1"
+

@@ -1,0 +1,9 @@
+---
+ - hosts: all
+   become: yes
+   roles:
+     - { role: hardening, tags: add_backend }
+     - { role: nfs, when: "inventory_hostname in groups['www']" }
+     - { role: loadbalancer, when: "inventory_hostname in groups['www']" }
+     - { role: database, when: "inventory_hostname in groups['www']" }
+     - { role: backend, when: "inventory_hostname in groups['backend']", tags: add_backend }

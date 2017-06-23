@@ -1,0 +1,3 @@
+{% for inventory_hostname in groups[http_group] %}
+{{nfs_directory}} {{hostvars[inventory_hostname].ansible_fqdn}}(rw)
+{% endfor %}

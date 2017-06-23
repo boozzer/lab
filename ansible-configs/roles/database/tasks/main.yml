@@ -1,22 +1,15 @@
 ---
  - name: install datebase
-   yum: name=mariadb-server state=present
-
- - name: firewall permit
-   shell: firewall-cmd --permanent --add-service=mysql
-   notify: firewalld_reload
-
- - name: installing DB modules
-   yum: name=MySQL-python state=present
+   yum: name={{item}} state=present
+   with_items:
+     - mariadb-server
+     - MySQL-python
 
  - name: start mariadb service
-   shell: systemctl start mariadb
-
- - name: enable mariadb service
-   shell: systemctl enable mariadb
+   service: name=mariadb enabled=yes state=started
 
  - name: restrict access to backend host
-   firewalld: port=3306/tcp source={{hostvars[item].ansible_eth1.ipv4.address}}/32 permanent=true state=enabled
+   firewalld: service=mysql source={{hostvars[item].ansible_eth1.ipv4.address}}/32 permanent=true state=enabled immediate=true
    with_items: "{{ groups['backend'] }}"
 
  - name: set root password

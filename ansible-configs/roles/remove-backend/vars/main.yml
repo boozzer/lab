@@ -1,0 +1,5 @@
+---
+ wordpress_external_port: '8000'
+ http_group: 'backend'
+ nfs_directory: '/var/wordpress.files'
+ host_count: "{{ groups['backend'] | length }}"

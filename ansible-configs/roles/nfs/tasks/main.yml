@@ -4,10 +4,7 @@
    yum: name=nfs-utils state=present
 
  - name: enable nfs service
-   shell: systemctl enable nfs-server.service
-
- - name: start nfs service
-   shell: systemctl start nfs-server.service
+   service: name=nfs-server state=started enabled=yes
 
  - name: Create mountable dir
    file: path={{nfs_directory}} state=directory mode=0777 owner=nfsnobody group=nfsnobody
@@ -21,10 +18,7 @@
    shell: exportfs -a
 
  - name: firewall permit
-   shell: firewall-cmd --permanent --add-service=nfs
-
- - name: firewall reload
-   shell: firewall-cmd --reload
+   firewalld: service=nfs permanent=true state=enabled immediate=true
 
  - name: install rsync
    yum: name=rsync state=present
